@@ -66,19 +66,19 @@ private:
 
 struct sort_by_image_with
 {
-    bool operator()(const file_target* rhs, const file_target* lhs);
+    bool operator()(file_target* rhs, file_target* lhs) const;
 };
 
 
 struct sort_by_image_height
 {
-    bool operator()(const file_target* rhs, const file_target* lhs);
+    bool operator()(file_target* rhs, file_target* lhs) const;
 };
 
 
 struct sort_by_image_size
 {
-    bool operator()(const file_target* rhs, const file_target* lhs);
+    bool operator()(file_target* rhs, file_target* lhs) const;
 };
 
 

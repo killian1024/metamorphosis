@@ -39,13 +39,15 @@ program::program(
         std::filesystem::path src_dir,
         std::vector<base_name> bse_nmes,
         std::vector<base_number> bse_nrs,
-        std::vector<sort_policie> sort_policies
+        std::vector<sort_policie> sort_policies,
+        std::regex regx
 )
         : src_dir_(std::move(src_dir))
         , bse_nmes_(std::move(bse_nmes))
         , bse_nrs_(std::move(bse_nrs))
         , fles_target_()
         , sort_policies_(std::move(sort_policies))
+        , regx_(std::move(regx))
 {
     file_target* fle_trg;
     std::size_t wdth;
@@ -59,6 +61,11 @@ program::program(
             if (x.is_regular_file())
             {
                 std::filesystem::path fle_pth = x.path();
+    
+                if (!std::regex_match(fle_pth.filename().c_str(), regx_))
+                {
+                    continue;
+                }
                 
                 if (fle_pth.filename().c_str()[0] != '.')
                 {
@@ -111,10 +118,16 @@ program::~program()
 
 int program::execute()
 {
+    int succ;
+    
     sort_sources();
     set_new_file_names();
     
-    return rename_files_target() ? 0 : -1;
+    succ = rename_files_target() ? 0 : -1;
+    
+    std::cout << spdios::set_default_text;
+    
+    return succ;
 }
 
 
@@ -162,19 +175,19 @@ void program::sort_sources()
         switch (x)
         {
             case sort_policie::ALPHABETICALLY:
-                std::sort(fles_target_.begin(), fles_target_.end(), sort_alphabeticaly());
+                spdalgo::quicksort(fles_target_, fles_target_.size(), sort_alphabeticaly());
                 break;
             
             case sort_policie::IMAGE_WITH:
-                std::sort(fles_target_.begin(), fles_target_.end(), sort_by_image_with());
+                spdalgo::quicksort(fles_target_, fles_target_.size(), sort_by_image_with());
                 break;
                 
             case sort_policie::IMAGE_HEIGTH:
-                std::sort(fles_target_.begin(), fles_target_.end(), sort_by_image_height());
+                spdalgo::quicksort(fles_target_, fles_target_.size(), sort_by_image_height());
                 break;
             
             case sort_policie::IMAGE_SIZE:
-                std::sort(fles_target_.begin(), fles_target_.end(), sort_by_image_size());
+                spdalgo::quicksort(fles_target_, fles_target_.size(), sort_by_image_size());
                 break;
         }
     }
@@ -203,16 +216,41 @@ bool program::get_image_size(
         std::size_t* hght
 ) const noexcept
 {
+    bool succ = true;
+    
     if (is_jpeg_extension(img_pth))
     {
-        return get_jpeg_image_size(img_pth, wdth, hght);
+        if (!(succ = get_jpeg_image_size(img_pth, wdth, hght)))
+        {
+            std::cout << spdios::set_light_red_text << "Error, " << img_pth.filename()
+                      << " is not a jpeg image" << spdios::newl;
+        }
     }
     else if (is_png_extension(img_pth))
     {
-        return get_png_image_size(img_pth, wdth, hght);
+        if (!(succ = get_png_image_size(img_pth, wdth, hght)))
+        {
+            std::cout << spdios::set_light_red_text << "Error, " << img_pth.filename()
+                      << " is not a png image" << spdios::newl;
+        }
     }
     
-    return false;
+    return succ;
+}
+
+
+struct jpeg_error
+{
+    struct jpeg_error_mgr pub;
+    jmp_buf setjmp_buffer;
+};
+
+
+METHODDEF(void)
+jpeg_error_exit (j_common_ptr cinfo)
+{
+    jpeg_error* myerr = (jpeg_error*)cinfo->err;
+    longjmp(myerr->setjmp_buffer, 1);
 }
 
 
@@ -223,7 +261,7 @@ bool program::get_jpeg_image_size(
 ) const noexcept
 {
     jpeg_decompress_struct jpeg_inf;
-    jpeg_error_mgr jpeg_err;
+    struct jpeg_error jerr;
     FILE* ifs;
     
     if ((ifs = fopen(img_pth.c_str(), "rb")) == nullptr)
@@ -231,7 +269,14 @@ bool program::get_jpeg_image_size(
         return false;
     }
     
-    jpeg_inf.err = jpeg_std_error(&jpeg_err);
+    jpeg_inf.err = jpeg_std_error(&jerr.pub);
+    jerr.pub.error_exit = jpeg_error_exit;
+    if (setjmp(jerr.setjmp_buffer))
+    {
+        jpeg_destroy_decompress(&jpeg_inf);
+        fclose(ifs);
+        return false;
+    }
     
     jpeg_create_decompress(&jpeg_inf);
     jpeg_stdio_src(&jpeg_inf, ifs);

@@ -40,10 +40,10 @@ image_target::image_target(
 }
 
 
-bool sort_by_image_with::operator()(const file_target* rhs, const file_target* lhs)
+bool sort_by_image_with::operator()(file_target* rhs, file_target* lhs) const
 {
-    const image_target* img_rhs = dynamic_cast<const image_target*>(rhs);
-    const image_target* img_lhs = dynamic_cast<const image_target*>(lhs);
+    image_target* img_rhs = dynamic_cast<image_target*>(rhs);
+    image_target* img_lhs = dynamic_cast<image_target*>(lhs);
     
     if (img_rhs == nullptr)
     {
@@ -58,10 +58,10 @@ bool sort_by_image_with::operator()(const file_target* rhs, const file_target* l
 }
 
 
-bool sort_by_image_height::operator()(const file_target* rhs, const file_target* lhs)
+bool sort_by_image_height::operator()(file_target* rhs, file_target* lhs) const
 {
-    const image_target* img_rhs = dynamic_cast<const image_target*>(rhs);
-    const image_target* img_lhs = dynamic_cast<const image_target*>(lhs);
+    image_target* img_rhs = dynamic_cast<image_target*>(rhs);
+    image_target* img_lhs = dynamic_cast<image_target*>(lhs);
     
     if (img_rhs == nullptr)
     {
@@ -76,14 +76,14 @@ bool sort_by_image_height::operator()(const file_target* rhs, const file_target*
 }
 
 
-bool sort_by_image_size::operator()(const file_target* rhs, const file_target* lhs)
+bool sort_by_image_size::operator()(file_target* rhs, file_target* lhs) const
 {
-    const image_target* img_rhs = dynamic_cast<const image_target*>(rhs);
-    const image_target* img_lhs = dynamic_cast<const image_target*>(lhs);
+    image_target* img_rhs = dynamic_cast<image_target*>(rhs);
+    image_target* img_lhs = dynamic_cast<image_target*>(lhs);
     
     if (img_rhs == nullptr)
     {
-        return img_lhs != nullptr;
+        return img_lhs == nullptr;
     }
     else if (img_lhs == nullptr)
     {

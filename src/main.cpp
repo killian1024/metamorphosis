@@ -36,6 +36,7 @@ int main(int argc, char* argv[])
                    "Sort alphabetically file targets before rename.");
     ap.add_key_arg({"--sort-by-image-size", "-siz"},
                    "Sort by image size file targets before rename.");
+    ap.add_key_value_arg({"--regex", "-reg"}, "Regex that all file targets have to match.");
     ap.add_help_arg({"--help"}, "Display this help and exit.");
     ap.add_gplv3_version_arg({"--version"}, "Output version information and exit", "1.0.0", "2018",
                              "Killian Poulaud");
@@ -45,6 +46,7 @@ int main(int argc, char* argv[])
     std::vector<metamorphosis::base_name> bse_names;
     std::vector<metamorphosis::base_number> bse_numbers;
     std::vector<metamorphosis::sort_policie> sort_polcs;
+    std::regex regx(ap.get_front_arg_value_as<std::string>("--regex", ".*"));
     
     for (auto& x : ap.get_arg_values_as<std::string>("--base-names"))
     {
@@ -67,7 +69,8 @@ int main(int argc, char* argv[])
             ap.get_front_arg_value_as<std::filesystem::path>("DIR"),
             std::move(bse_names),
             std::move(bse_numbers),
-            std::move(sort_polcs));
+            std::move(sort_polcs),
+            std::move(regx));
     
     return prog.execute();
 }

@@ -104,7 +104,7 @@ int file_target::rename() noexcept
 }
 
 
-bool sort_alphabeticaly::operator()(const file_target* rhs, const file_target* lhs)
+bool sort_alphabeticaly::operator()(file_target* rhs, file_target* lhs) const
 {
     if (rhs->get_file_path().empty())
     {

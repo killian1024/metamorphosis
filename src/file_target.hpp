@@ -75,7 +75,7 @@ private:
 
 struct sort_alphabeticaly
 {
-    bool operator()(const file_target* rhs, const file_target* lhs);
+    bool operator()(file_target* rhs, file_target* lhs) const;
 };
 
 

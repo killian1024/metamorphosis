@@ -25,6 +25,7 @@
 #define METAMORPHOSIS_PROGRAM_HPP
 
 #include <filesystem>
+#include <regex>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -46,7 +47,8 @@ public:
             std::filesystem::path src_dir,
             std::vector<base_name> bse_nmes,
             std::vector<base_number> bse_nrs,
-            std::vector<sort_policie> sort_policies
+            std::vector<sort_policie> sort_policies,
+            std::regex regx
     );
     
     ~program();
@@ -90,6 +92,8 @@ private:
     std::vector<base_name> bse_nmes_;
     
     std::vector<base_number> bse_nrs_;
+    
+    std::regex regx_;
     
     std::vector<sort_policie> sort_policies_;
     
