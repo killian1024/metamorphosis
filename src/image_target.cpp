@@ -54,7 +54,8 @@ bool sort_by_image_with::operator()(file_target* rhs, file_target* lhs) const
         return true;
     }
     
-    return img_rhs->get_with() > img_lhs->get_with();
+    return img_rhs->get_with() > img_lhs->get_with() ||
+           img_rhs->get_with() == img_lhs->get_with();
 }
 
 
@@ -72,7 +73,8 @@ bool sort_by_image_height::operator()(file_target* rhs, file_target* lhs) const
         return true;
     }
     
-    return img_rhs->get_height() > img_lhs->get_height();
+    return img_rhs->get_height() > img_lhs->get_height() ||
+           img_rhs->get_height() == img_lhs->get_height();
 }
 
 
@@ -90,7 +92,8 @@ bool sort_by_image_size::operator()(file_target* rhs, file_target* lhs) const
         return true;
     }
     
-    return img_rhs->get_size() > img_lhs->get_size();
+    return img_rhs->get_size() > img_lhs->get_size() ||
+           img_rhs->get_size() == img_lhs->get_size();
 }
 
 
