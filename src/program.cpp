@@ -26,6 +26,8 @@
 #include <iostream>
 
 #include <speed/speed.hpp>
+#include <speed/speed_alias.hpp>
+
 #include <jpeglib.h>
 #include <png.h>
 
@@ -86,9 +88,9 @@ program::program(
     }
     catch (const std::filesystem::filesystem_error& fe)
     {
-        std::cerr << spdios::set_light_red_text
+        std::cerr << spd::ios::set_light_red_text
                   << "Error executing in directory: " << src_dir_
-                  << spdios::newl;
+                  << spd::ios::newl;
         
         exit(-1);
     }
@@ -98,7 +100,7 @@ program::program(
         bse_nrs.emplace_back(1);
     }
     
-    digs = spdscalars::get_n_digits(fles_target_.size());
+    digs = spd::scals::get_n_digits(fles_target_.size());
     
     for (auto& x : bse_nrs_)
     {
@@ -125,7 +127,7 @@ int program::execute()
     
     succ = rename_files_target() ? 0 : -1;
     
-    std::cout << spdios::set_default_text;
+    std::cout << spd::ios::set_default_text;
     
     return succ;
 }
@@ -175,19 +177,19 @@ void program::sort_sources()
         switch (x)
         {
             case sort_policie::ALPHABETICALLY:
-                spdalgo::quicksort(fles_target_, fles_target_.size(), sort_alphabeticaly());
+                spd::algo::quicksort(fles_target_, fles_target_.size(), sort_alphabeticaly());
                 break;
             
             case sort_policie::IMAGE_WITH:
-                spdalgo::quicksort(fles_target_, fles_target_.size(), sort_by_image_with());
+                spd::algo::quicksort(fles_target_, fles_target_.size(), sort_by_image_with());
                 break;
                 
             case sort_policie::IMAGE_HEIGTH:
-                spdalgo::quicksort(fles_target_, fles_target_.size(), sort_by_image_height());
+                spd::algo::quicksort(fles_target_, fles_target_.size(), sort_by_image_height());
                 break;
             
             case sort_policie::IMAGE_SIZE:
-                spdalgo::quicksort(fles_target_, fles_target_.size(), sort_by_image_size());
+                spd::algo::quicksort(fles_target_, fles_target_.size(), sort_by_image_size());
                 break;
         }
     }
@@ -222,16 +224,16 @@ bool program::get_image_size(
     {
         if (!(succ = get_jpeg_image_size(img_pth, wdth, hght)))
         {
-            std::cout << spdios::set_light_red_text << "Error, " << img_pth.filename()
-                      << " is not a jpeg image" << spdios::newl;
+            std::cout << spd::ios::set_light_red_text << "Error, " << img_pth.filename()
+                      << " is not a jpeg image" << spd::ios::newl;
         }
     }
     else if (is_png_extension(img_pth))
     {
         if (!(succ = get_png_image_size(img_pth, wdth, hght)))
         {
-            std::cout << spdios::set_light_red_text << "Error, " << img_pth.filename()
-                      << " is not a png image" << spdios::newl;
+            std::cout << spd::ios::set_light_red_text << "Error, " << img_pth.filename()
+                      << " is not a png image" << spd::ios::newl;
         }
     }
     

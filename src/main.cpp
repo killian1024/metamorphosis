@@ -18,20 +18,21 @@
  */
 
 #include <speed/speed.hpp>
+#include <speed/speed_alias.hpp>
 
 #include "program.hpp"
 
 
 int main(int argc, char* argv[])
 {
-    spdap::arg_parser ap("metamorphosis");
+    spd::ap::arg_parser ap("metamorphosis");
     ap.add_help_text("Options:");
     ap.add_key_value_arg({"--base-names", "-bnm"}, "Base names for file targets.",
-                         {spdap::avt_t::STRING}, 1u, ~0u,
-                         spdap::af_t::DEFAULT_ARG_FLAGS | spdap::af_t::ALLWAYS_REQUIRED);
+                         {spd::ap::avt_t::STRING}, 1u, ~0u,
+                         spd::ap::af_t::DEFAULT_ARG_FLAGS | spd::ap::af_t::ALLWAYS_REQUIRED);
     ap.add_key_value_arg({"--base-numbers", "-bnr"}, "Base numbers for file targets.",
-                         {spdap::avt_t::UINT64}, 1u, ~0u,
-                         spdap::af_t::DEFAULT_ARG_FLAGS | spdap::af_t::ALLWAYS_REQUIRED);
+                         {spd::ap::avt_t::UINT64}, 1u, ~0u,
+                         spd::ap::af_t::DEFAULT_ARG_FLAGS | spd::ap::af_t::ALLWAYS_REQUIRED);
     ap.add_key_arg({"--sort-alphabetically", "-sa"},
                    "Sort alphabetically file targets before rename.");
     ap.add_key_arg({"--sort-by-image-size", "-siz"},
@@ -40,7 +41,7 @@ int main(int argc, char* argv[])
     ap.add_help_arg({"--help"}, "Display this help and exit.");
     ap.add_gplv3_version_arg({"--version"}, "Output version information and exit", "1.0.0", "2018",
                              "Killian Poulaud");
-    ap.add_keyless_arg("DIR", "Directory", "", {spdap::avt_t::RWX_DIR});
+    ap.add_keyless_arg("DIR", "Directory", "", {spd::ap::avt_t::RWX_DIR});
     ap.parse_args((unsigned int)argc, argv);
     
     std::vector<metamorphosis::base_name> bse_names;
